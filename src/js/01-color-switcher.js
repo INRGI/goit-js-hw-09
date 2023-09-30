@@ -17,7 +17,9 @@ function onStart() {
 };
 
 function onStop() {
-    
+    clearInterval(timerId);
+    startBtn.removeAttribute('disabled');
+    stopBtn.setAttribute('disabled', 'true');
 }
 startBtn.addEventListener('click', onStart);
 stopBtn.addEventListener('click', onStop);
