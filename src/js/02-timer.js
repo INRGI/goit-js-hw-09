@@ -1,14 +1,15 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
-const inputDate = document.querySelector('[datetime-picker]');
 const startBtn = document.querySelector('[data-start]');
-const days = document.querySelector('[data-days]');
-const hours = document.querySelector('[data-hours]');
-const minutes = document.querySelector('[data-minutes]');
-const seconds = document.querySelector('[data-seconds]');
+const daysEl = document.querySelector('[data-days]');
+const hoursEl = document.querySelector('[data-hours]');
+const minutesEl = document.querySelector('[data-minutes]');
+const secondsEl = document.querySelector('[data-seconds]');
 
 let timerId = null;
+const currentTime = new Date().getTime();
+let deltaTime
 
 startBtn.setAttribute('disabled', true);
 
@@ -20,14 +21,14 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    const currentTime = new Date().getTime();
-    const selectedDate = selectedDates[0];
+    const selectedDate = selectedDates[0].getTime();
+    deltaTime = selectedDate - currentTime;
       if (selectedDate < currentTime) {
         window.alert("Please choose a date in the future")
         return;
       }
     startBtn.removeAttribute('disabled');
-    renderTime(selectedDate - currentTime)
+    renderTime(deltaTime)
       
   },
 };
@@ -39,29 +40,29 @@ startBtn.addEventListener('click', onStart);
 flatpickr('#datetime-picker', { ...options });
 
 function onStart() {
-  inputDate.setAttribute('disabled', 'true');
   timerId = setInterval(() => {
-    
+    stopTimer();
+    deltaTime -= 1000;
+    renderTime(convertMs(deltaTime));
   },1000)
 }
 
 function stopTimer() {
   if (
-    (days.textContent === '00') &
-    (hours.textContent === '00') &
-    (minutes.textContent === '00') &
-    (seconds.textContent === '00')
+    (daysEl.textContent === '00') &
+    (hoursEl.textContent === '00') &
+    (minutesEl.textContent === '00') &
+    (secondsEl.textContent === '00')
   ) {
     clearInterval(timerId);
   }
 }
 
-function renderTime(time) {
-  const convertTime = convertMs(time)
-  days.textContent = convertTime.days;
-  hours.textContent = convertTime.hours;
-  minutes.textContent = convertTime.minutes;
-  seconds.textContent = convertTime.seconds;
+function renderTime({ days, hours, minutes, seconds }) {
+  daysEl.textContent = days;
+  hoursEl.textContent = hours;
+  minutesEl.textContent = minutes;
+  secondsEl.textContent = seconds;
 }
 
 function convertMs(ms) {
