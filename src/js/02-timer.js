@@ -28,7 +28,7 @@ const options = {
         return;
       }
     startBtn.removeAttribute('disabled');
-    renderTime(deltaTime)
+    renderTime(convertMs(deltaTime))
       
   },
 };
@@ -40,6 +40,7 @@ startBtn.addEventListener('click', onStart);
 flatpickr('#datetime-picker', { ...options });
 
 function onStart() {
+  startBtn.setAttribute('disabled', true);
   timerId = setInterval(() => {
     stopTimer();
     deltaTime -= 1000;
@@ -52,7 +53,7 @@ function stopTimer() {
     (daysEl.textContent === '00') &
     (hoursEl.textContent === '00') &
     (minutesEl.textContent === '00') &
-    (secondsEl.textContent === '00')
+    (secondsEl.textContent === '01')
   ) {
     clearInterval(timerId);
   }
